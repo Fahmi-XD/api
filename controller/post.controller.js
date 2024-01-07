@@ -7,7 +7,7 @@ function getTime() {
     const tanggal = sekarang.getDate();
     const bulan = sekarang.toLocaleString("default", { month: "long" });
     const tahun = sekarang.getFullYear();
-    const format = `${waktu},${tanggal},${bulan},${tahun}`;
+    const format = `${waktu},${tanggal}-${bulan}-${tahun}`;
     return format;
 }
 
@@ -107,6 +107,25 @@ async function delArray(email, uid) {
     await fs.writeFileSync("database/database.json", JSON.stringify(data));
 }
 
+async function getAllArray(page) {
+    let data = [];
+    const anakKecil = JSON.parse(
+        await fs.readFileSync("database/database.json", "utf-8")
+    );
+    data.push(...anakKecil);
+    data.sort(
+        (a, b) =>
+            new Date(
+                `${b.postTime.split(",")[1]} ${b.postTime.split(",")[0]}`
+            ) -
+            new Date(`${a.postTime.split(",")[1]} ${a.postTime.split(",")[0]}`)
+    );
+    const itemsPerPage = 8;
+    const startIndex = (page - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return data.slice(startIndex, endIndex);
+}
+
 const clientPost = {
     post: async (req, res) => {
         const { nama, email } = req.body;
@@ -192,6 +211,19 @@ const clientPost = {
             status: 200,
             mess: "Sukses menghapus data",
             data: "Success"
+        });
+    },
+
+    getAllPost: async (req, res) => {
+        const page = req.query.page ? req.query.page : 1;
+        const coser = await getAllArray(page);
+        res.status(coser.length != 0 ? 200 : 400).json({
+            status: coser.length != 0 ? 200 : 400,
+            mess:
+                coser.length != 0
+                    ? "Sukses mendapatkan 8 data postingan"
+                    : `Page ${page} tidak ada`,
+            data: coser.length != 0 ? coser : "Not Found"
         });
     }
 };
