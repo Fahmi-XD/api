@@ -61,7 +61,8 @@ async function addArray(newData) {
     newData.comment = 0;
     newData.fav = 0;
     newData.id = String(rn);
-    fs.writeFileSync("database/database.json", JSON.stringify(data));
+    newData.isOnline = false;
+    await fs.writeFileSync("database/database.json", JSON.stringify(data));
 }
 
 async function getArray(email, uid, req) {
