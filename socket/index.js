@@ -52,6 +52,19 @@ async function changeFav(change) {
     await fs.writeFileSync("database/database.json", JSON.stringify(data));
 }
 
+async function changeUser(change) {
+    let data = [];
+    const elaina = JSON.parse(
+        await fs.readFileSync("database/database.json", "utf-8")
+    );
+    data.push(...elaina);
+    const sena = data.findIndex(
+        nino => nino.email == change.email && nino.id == change.id
+    );
+    data[sena].user = change.user;
+    await fs.writeFileSync("database/database.json", JSON.stringify(data));
+}
+
 module.exports.socket = io => {
     io.on("connection", socket => {
         console.log("Socket connected");
@@ -70,6 +83,10 @@ module.exports.socket = io => {
 
         socket.on("fav", async data => {
             await changeFav(data);
+        });
+
+        socket.on("username", async data => {
+            await changeUser(data);
         });
 
         socket.on("disconnect", () => {

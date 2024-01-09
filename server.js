@@ -23,18 +23,18 @@ app.use((req, res, next) => {
 });
 
 socket(io);
-// app.use(express.static("public"));
+app.use(express.static("public"));
 
 app.use("/api", logRouter);
 app.use("/post", postRouter);
 app.use("/post/media", express.static("database/media"));
 
 app.get("/", (req, res) => {
-    // res.sendFile(path.join(__dirname, "public", "index.html"));
-    
+    res.sendFile(path.join(__dirname, "public", "index.html"));
+    /*
     res.json({
         mess: "Hello World!"
-    });
+    });*/
 });
 
 server.listen(5000, () => {

@@ -108,12 +108,16 @@ async function delArray(email, uid) {
     await fs.writeFileSync("database/database.json", JSON.stringify(data));
 }
 
-async function getAllArray(page) {
+async function getAllArray(page, req) {
     let data = [];
     const anakKecil = JSON.parse(
         await fs.readFileSync("database/database.json", "utf-8")
     );
-    data.push(...anakKecil);
+    anakKecil.forEach(omi => {
+        const fullUrl = req.protocol + "://" + req.get("host") + "/post/media/";
+        omi.mediaUrl = fullUrl + omi.namaMedia;
+        data.push(omi);
+    });
     data.sort(
         (a, b) =>
             new Date(
@@ -133,7 +137,7 @@ async function getAllArray(page) {
 
 const clientPost = {
     post: async (req, res) => {
-        const { nama, email } = req.body;
+        const { nama, email, user, imgUrl } = req.body;
         const file = req.files.file;
         if (
             !email ||
@@ -150,7 +154,9 @@ const clientPost = {
         }
         let Client = {
             postData: file.data,
+            imgUrl: imgUrl,
             nama: nama,
+            user: user,
             email: email,
             postType: file.mimetype,
             namaMedia: null,
@@ -221,7 +227,7 @@ const clientPost = {
 
     getAllPost: async (req, res) => {
         const page = req.query.page ? req.query.page : null;
-        const coser = await getAllArray(page);
+        const coser = await getAllArray(page, req);
         res.status(coser.length != 0 ? 200 : 400).json({
             status: coser.length != 0 ? 200 : 400,
             mess:
