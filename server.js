@@ -29,7 +29,7 @@ app.use("/api", logRouter);
 app.use("/post", postRouter);
 app.use(
     "/post/media",
-    (req, res) => {
+    (req, res, next) => {
         const requestedMediaType = req.url.split(".").pop();
         switch (requestedMediaType) {
             case "jpg":
