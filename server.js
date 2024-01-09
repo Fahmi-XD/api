@@ -27,7 +27,26 @@ app.use(express.static("public"));
 
 app.use("/api", logRouter);
 app.use("/post", postRouter);
-app.use("/post/media", express.static("database/media"));
+app.use(
+    "/post/media",
+    (req, res) => {
+        const requestedMediaType = req.url.split(".").pop();
+        switch (requestedMediaType) {
+            case "jpg":
+            case "jpeg":
+                res.set("Content-Type", "image/jpeg");
+                break;
+            case "png":
+                res.set("Content-Type", "image/png");
+                break;
+            case "mp4":
+                res.set("Content-Type", "video/mp4");
+                break;
+        }
+        next()
+    },
+    express.static("database/media")
+);
 
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "index.html"));
