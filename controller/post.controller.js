@@ -124,7 +124,11 @@ async function getAllArray(page) {
     const itemsPerPage = 8;
     const startIndex = (page - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    return data.slice(startIndex, endIndex);
+    if (page == null) {
+        return data;
+    } else {
+        return data.slice(startIndex, endIndex);
+    }
 }
 
 const clientPost = {
@@ -216,7 +220,7 @@ const clientPost = {
     },
 
     getAllPost: async (req, res) => {
-        const page = req.query.page ? req.query.page : 1;
+        const page = req.query.page ? req.query.page : null;
         const coser = await getAllArray(page);
         res.status(coser.length != 0 ? 200 : 400).json({
             status: coser.length != 0 ? 200 : 400,
