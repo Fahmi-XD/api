@@ -65,32 +65,31 @@ async function changeUser(change) {
     await fs.writeFileSync("database/database.json", JSON.stringify(data));
 }
 
-module.exports.socket = io => {
-    io.on("connection", socket => {
-        console.log("Socket connected");
+module.exports.socket = async ablySocket => {
+    const ably = new ablySocket.Realtime.Promise(
+        "uhZEmQ.f5dgdQ:wVpevkmaNelNc_IXU6bDEf6yiqQ5oUVtQEyQHlNVw48"
+    );
+    await ably.connection.once("connected");
+    console.log("Connected Ably successfully");
+    const channel = ably.channels.get("post");
 
-        socket.on("status", async data => {
-            await changeStatus(data);
-        });
+    await channel.subscribe("status", async data => {
+        await changeStatus(data.data);
+    });
 
-        socket.on("like", async data => {
-            await changeLike(data);
-        });
+    await channel.subscribe("like", async data => {
+        await changeLike(data.data);
+    });
 
-        socket.on("comment", async data => {
-            await changeComment(data);
-        });
+    await channel.subscribe("comment", async data => {
+        await changeComment(data.data);
+    });
 
-        socket.on("fav", async data => {
-            await changeFav(data);
-        });
+    await channel.subscribe("fav", async data => {
+        await changeFav(data.data);
+    });
 
-        socket.on("username", async data => {
-            await changeUser(data);
-        });
-
-        socket.on("disconnect", () => {
-            console.log("Socket disconnected");
-        });
+    await channel.subscribe("user", async data => {
+        await changeUser(data.data);
     });
 };

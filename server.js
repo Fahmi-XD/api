@@ -4,14 +4,13 @@ const express = require("express");
 const http = require("http");
 const path = require("path");
 const cors = require("cors");
-const socketIO = require("socket.io");
+const ablySocket = require("ably");
 const fileUpload = require("express-fileupload");
 const logRouter = require("./routes/login.router");
 const postRouter = require("./routes/post.router");
 const { socket } = require("./socket/index");
 const app = express();
 const server = http.createServer(app);
-const io = socketIO(server);
 
 app.use(fileUpload());
 app.use(express.urlencoded({ extended: false }));
@@ -22,7 +21,7 @@ app.use((req, res, next) => {
     next();
 });
 
-socket(io);
+socket(ablySocket);
 // app.use(express.static("public"));
 
 app.use("/api", logRouter);
@@ -49,7 +48,7 @@ app.use(
 );
 
 app.get("/", (req, res) => {
-    //res.sendFile(path.join(__dirname, "public", "index.html"));
+    // res.sendFile(path.join(__dirname, "public", "index.html"));
 
     res.json({
         mess: "Hello World!"
