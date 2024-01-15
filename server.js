@@ -11,6 +11,7 @@ const postRouter = require("./routes/post.router");
 const { socket } = require("./socket/index");
 const app = express();
 const server = http.createServer(app);
+const port = process.env.PORT || 3000; // Gunakan port default 3000 jika variabel tidak tersedia
 
 app.use(fileUpload());
 app.use(express.urlencoded({ extended: false }));
@@ -55,6 +56,6 @@ app.get("/", (req, res) => {
     });
 });
 
-server.listen(5000, () => {
-    console.log("Server is Running ...");
+server.listen(port, () => {
+    console.log("Server is Running on Port " + port);
 });
