@@ -12,6 +12,7 @@
     "author": "Fahmi XD",
     "license": "ISC",
     "dependencies": {
+        "@tobyg74/tiktok-api-dl": "^1.0.13",
         "ably": "^1.2.48",
         "axios": "^1.6.3",
         "bcryptjs": "^2.4.3",

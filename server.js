@@ -1,61 +1,63 @@
-"use strict";
-require("dotenv").config();
-const express = require("express");
-const http = require("http");
-const path = require("path");
-const cors = require("cors");
-const ablySocket = require("ably");
-const fileUpload = require("express-fileupload");
-const logRouter = require("./routes/login.router");
-const postRouter = require("./routes/post.router");
-const { socket } = require("./socket/index");
+'use strict';
+require('dotenv').config();
+const express = require('express');
+const http = require('http');
+const path = require('path');
+const cors = require('cors');
+const ablySocket = require('ably');
+const fileUpload = require('express-fileupload');
+const logRouter = require('./routes/login.router');
+const postRouter = require('./routes/post.router');
+const tiktokRouter = require('./routes/tiktok.router');
+const { socket } = require('./socket/index');
 const app = express();
 const server = http.createServer(app);
-const port = process.env.PORT || 3000; // Gunakan port default 3000 jika variabel tidak tersedia
+const port = process.env.PORT || 6060; // Gunakan port default 3000 jika variabel tidak tersedia
 
 app.use(fileUpload());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors());
 app.use((req, res, next) => {
-    console.log("Client : " + req.path);
+    console.log('Client : ' + req.path);
     next();
 });
 
 socket(ablySocket);
-// app.use(express.static("public"));
+// app.use(express.static('public'));
 
-app.use("/api", logRouter);
-app.use("/post", postRouter);
+app.use('/api', logRouter);
+app.use('/post', postRouter);
+app.use('/tiktok', tiktokRouter);
 app.use(
-    "/post/media",
+    '/post/media',
     (req, res, next) => {
-        const requestedMediaType = req.url.split(".").pop();
+        const requestedMediaType = req.url.split('.').pop();
         switch (requestedMediaType) {
-            case "jpg":
-            case "jpeg":
-                res.set("Content-Type", "image/jpeg");
+            case 'jpg':
+            case 'jpeg':
+                res.set('Content-Type', 'image/jpeg');
                 break;
-            case "png":
-                res.set("Content-Type", "image/png");
+            case 'png':
+                res.set('Content-Type', 'image/png');
                 break;
-            case "mp4":
-                res.set("Content-Type", "video/mp4");
+            case 'mp4':
+                res.set('Content-Type', 'video/mp4');
                 break;
         }
         next();
     },
-    express.static("database/media")
+    express.static('database/media')
 );
 
-app.get("/", (req, res) => {
-    // res.sendFile(path.join(__dirname, "public", "index.html"));
+app.get('/', (req, res) => {
+    // res.sendFile(path.join(__dirname, 'public', 'index.html'));
 
     res.json({
-        mess: "Hello World!"
+        mess: 'Hello World!'
     });
 });
 
 server.listen(port, () => {
-    console.log("Server is Running on Port " + port);
+    console.log('Server is Running on Port ' + port);
 });
