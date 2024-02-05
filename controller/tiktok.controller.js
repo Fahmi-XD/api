@@ -12,15 +12,9 @@ function random_number() {
     return re;
 }
 
-async function showVideoMedia(url, res, mediaType) {
+async function showVideoMedia(url, res) {
     const response = await axios.get(url, { responseType: 'stream' });
-    if (mediaType.includes('video')) {
-        res.setHeader('Content-Type', 'video/mp4');
-    } else if (mediaType.includes('audio')) {
-        res.setHeader('Content-Type', 'audio/mp3');
-    } else {
-        res.setHeader('Content-Type', 'image/jpeg');
-    }
+    res.set(response.headers);
     response.data.pipe(res);
 }
 
@@ -44,9 +38,9 @@ const tiktok_download = {
     },
 
     get_tiktok_download: async (req, res) => {
-        const { tiktokUrl, tiktokMediaType } = req.query;
+        const { tiktokUrl } = req.query;
         try {
-            await showVideoMedia(tiktokUrl, res, tiktokMediaType);
+            await showVideoMedia(tiktokUrl, res);
         } catch (error) {
             console.log('Error' + error);
             res.status(500).send('Internal Server Error');

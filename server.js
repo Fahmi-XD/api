@@ -54,7 +54,7 @@ app.get('/', (req, res) => {
     // res.sendFile(path.join(__dirname, 'public', 'index.html'));
 
     res.json({
-        mess: 'Hello World!'
+        mess: 'Welcome Api V2'
     });
 });
 
