@@ -4,6 +4,7 @@ const express = require('express');
 const http = require('http');
 const path = require('path');
 const cors = require('cors');
+const secure = require('ssl-express-www');
 const ablySocket = require('ably');
 const fileUpload = require('express-fileupload');
 const logRouter = require('./routes/login.router');
@@ -17,13 +18,17 @@ const port = process.env.PORT || 6060; // Gunakan port default 3000 jika variabe
 app.use(fileUpload());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+app.set('trust proxy', true);
+app.set('json spaces', 2);
 app.use(cors());
+app.use(secure);
+/*
 app.use((req, res, next) => {
     console.log('Client : ' + req.path);
     next();
 });
-
-socket(ablySocket);
+*/
+// socket(ablySocket);
 // app.use(express.static('public'));
 
 app.use('/api', logRouter);
@@ -54,7 +59,7 @@ app.get('/', (req, res) => {
     // res.sendFile(path.join(__dirname, 'public', 'index.html'));
 
     res.json({
-        mess: 'Welcome Api V2'
+        mess: 'Welcome Api V2.4'
     });
 });
 
